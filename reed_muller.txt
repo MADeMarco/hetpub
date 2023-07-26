@@ -1,0 +1,89 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {
+    "pycharm": {
+     "is_executing": true
+    }
+   },
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "\n",
+    "# This script calculates the stabilizers for the 15-qubit doubled color code.\n",
+    "# The code is based on the Reed-Muller code, a quantum error-correcting code.\n",
+    "# For more information, see: https://arxiv.org/pdf/1509.03239.pdf\n",
+    "\n",
+    "# Define the faces of the 3x4 lattice\n",
+    "faces = np.array([[1, 3, 5, 7], [4, 5, 6, 7], [2, 3, 6, 7]])\n",
+    "\n",
+    "# Get the size of the faces matrix\n",
+    "sizes = faces.shape\n",
+    "\n",
+    "# Initialize the links matrix\n",
+    "links = np.zeros((np.prod(sizes), 2), dtype=int)\n",
+    "\n",
+    "# Populate the links matrix\n",
+    "for irow in range(3):\n",
+    "    for icol in range(4):\n",
+    "        linknum = icol + sizes[1] * irow\n",
+    "        links[linknum, 0] = faces[irow, icol]\n",
+    "        links[linknum, 1] = faces[irow, (icol+1) % 4]\n",
+    "\n",
+    "# Define the X-checks and Z-checks matrices\n",
+    "X_checks = np.vstack([np.hstack([faces, faces + 7]), np.arange(8, 16).reshape(1, -1)])\n",
+    "G = np.hstack([links, links + 7])\n",
+    "T = np.vstack([faces, faces + 7, [8, 11, 12, 15]])\n",
+    "Z_checks = np.vstack([G, T])\n",
+    "\n",
+    "# Create X-check matrix\n",
+    "X_check_num = X_checks.shape[0]\n",
+    "X_check_matrix = np.zeros([X_check_num, 15])\n",
+    "for i in range(X_check_num):\n",
+    "    X_check_matrix[i, X_checks[i, :]-1] = 1\n",
+    "\n",
+    "# Create Z-check matrix\n",
+    "Z_check_num = Z_checks.shape[0]\n",
+    "Z_check_matrix = np.zeros([Z_check_num, 15])\n",
+    "for i in range(Z_check_num):\n",
+    "    Z_check_matrix[i, Z_checks[i, :]-1] = 1\n",
+    "\n",
+    "# Display the X-check and Z-check matrices\n",
+    "print(\"X_check_matrix:\")\n",
+    "print(X_check_matrix)\n",
+    "print(\"Z_check_matrix:\")\n",
+    "print(Z_check_matrix)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.10.4"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
